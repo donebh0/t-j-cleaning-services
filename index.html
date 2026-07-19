@@ -1057,19 +1057,23 @@
         }
  
         // Handle Schedule Submission
-        function handleSchedule(e) {
-            e.preventDefault();
- 
-            const formData = new FormData(document.getElementById('scheduleForm'));
-            const data = Object.fromEntries(formData);
- 
-            // Save to localStorage
-            const requests = JSON.parse(localStorage.getItem('cleaningRequests') || '[]');
-            requests.push({
-                ...data,
-                ...currentQuote,
-                submittedAt: new Date().toLocaleString()
-            });
+        async function handleSchedule(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(document.getElementById('scheduleForm'));
+    const data = Object.fromEntries(formData);
+    
+    // Send data to your Google Apps Script
+    await fetch('https://script.google.com/macros/s/AKfycbxiu_UIobcbJkoQWvhyPzTh15J4MYE1tV0BuxR-Xo8pKicjFaDbnhTJOCaBsYOjhISwFg/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(data)
+    });
+
+    // Update UI
+    document.getElementById('scheduleForm').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+}
             localStorage.setItem('cleaningRequests', JSON.stringify(requests));
  
             // Show success
